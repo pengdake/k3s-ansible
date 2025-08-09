@@ -19,7 +19,7 @@
   block:
     - name: Download K3s install script
       ansible.builtin.get_url:
-        url: https://get.k3s.io/
+        url: https://rancher-mirror.rancher.cn/k3s/k3s-install.sh
         timeout: 120
         dest: /usr/local/bin/k3s-install.sh
         owner: root
@@ -31,6 +31,7 @@
         cmd: /usr/local/bin/k3s-install.sh
       environment:
         INSTALL_K3S_SKIP_START: "true"
+        INSTALL_K3S_MIRROR: "cn"
         INSTALL_K3S_VERSION: "{{ k3s_version }}"
       changed_when: true
 
