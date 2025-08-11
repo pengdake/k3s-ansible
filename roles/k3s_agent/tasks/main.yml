@@ -19,7 +19,7 @@
   block:
     - name: Download K3s install script
       ansible.builtin.get_url:
-        url: https://get.k3s.io/
+        url: https://rancher-mirror.rancher.cn/k3s/k3s-install.sh
         timeout: 120
         dest: /usr/local/bin/k3s-install.sh
         owner: root
@@ -32,6 +32,7 @@
       environment:
         INSTALL_K3S_SKIP_START: "true"
         INSTALL_K3S_VERSION: "{{ k3s_version }}"
+        INSTALL_K3S_MIRROR: "cn"
         INSTALL_K3S_EXEC: "agent"
       changed_when: true
 
@@ -68,7 +69,7 @@
     regexp: "^K3S_TOKEN=\\s*(?!{{ token }}\\s*$)"
 
 - name: Add the token for joining the cluster to the environment
-  no_log: true # avoid logging the server token
+  #no_log: true # avoid logging the server token
   ansible.builtin.lineinfile:
     path: "{{ systemd_dir }}/k3s-agent.service.env"
     line: "{{ item }}"
