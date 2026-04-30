@@ -3,9 +3,12 @@ k3s_cluster:
   children:
     server:
       hosts:
-        192.168.31.94:
-        192.168.31.95:
-        192.168.31.96:
+        192.168.31.93:
+        192.168.31.88:
+        192.168.31.89:
+    agent:
+      hosts:
+        192.168.31.98:
 
   # Required Vars
   vars:
@@ -22,7 +25,7 @@ k3s_cluster:
     api_endpoint: "{{ hostvars[groups['server'][0]]['ansible_host'] | default(groups['server'][0]) }}"
 
     # Optional vars
-    # extra_server_args: ""
+    extra_server_args: "--disable local-storage"
     # extra_agent_args: ""
     # cluster_context: k3s-ansible
     # api_port: 6443
@@ -48,15 +51,16 @@ k3s_cluster:
       mirrors:
         docker.io:
           endpoint:
-            - "https://dockerproxy.net"
+            - "https://docker.xuanyuan.me"
+            - "https://atomhub.openatom.cn"
             - "https://docker.m.daocloud.io"
         registry.k8s.io:
           endpoint:
-            - "https://registry.cn-hangzhou.aliyuncs.com/google_containers"
             - "https://k8s.m.daocloud.io"
-        "*":
+        quey.io:
           endpoint:
-            - "https://registry.cn-hangzhou.aliyuncs.com"
+            - "https://quay.m.daocloud.io"
+            - "quay.nju.edu.cn"
     #   Containerd can be configured to connect to private registries and use them to pull images as needed by the kubelet.
     #   YAML here will be placed as the content of /etc/rancher/k3s/registries.yaml
     #   See https://docs.k3s.io/installation/private-registry
