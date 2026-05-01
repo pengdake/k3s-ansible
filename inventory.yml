@@ -53,11 +53,11 @@ k3s_cluster:
           endpoint:
             - "https://docker.xuanyuan.me"
             - "https://atomhub.openatom.cn"
-            - "https://docker.m.daocloud.io"
+            - "http://harbor.pengdake.xyz:5000/v2/proxy-cache"
         registry.k8s.io:
           endpoint:
             - "https://k8s.m.daocloud.io"
-        quey.io:
+        quay.io:
           endpoint:
             - "https://quay.m.daocloud.io"
             - "quay.nju.edu.cn"
