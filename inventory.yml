@@ -53,7 +53,7 @@ k3s_cluster:
           endpoint:
             - "https://docker.xuanyuan.me"
             - "https://atomhub.openatom.cn"
-            - "http://harbor.pengdake.xyz:5000/v2/proxy-cache"
+            - "http://harbor.pengdake.xyz/proxy-cache"
         registry.k8s.io:
           endpoint:
             - "https://k8s.m.daocloud.io"
@@ -61,6 +61,15 @@ k3s_cluster:
           endpoint:
             - "https://quay.m.daocloud.io"
             - "quay.nju.edu.cn"
+        harbor.pengdake.xyz:
+          endpoint:
+            - "https://harbor.pengdake.xyz"
+      configs:
+        "harbor.pengdake.xyz":
+          tls:
+            ca_file: /etc/rancher/k3s/harbor-ca.crt
+            cert_file: /etc/rancher/k3s/harbor-tls.crt
+            key_file: /etc/rancher/k3s/harbor-tls.key
     #   Containerd can be configured to connect to private registries and use them to pull images as needed by the kubelet.
     #   YAML here will be placed as the content of /etc/rancher/k3s/registries.yaml
     #   See https://docs.k3s.io/installation/private-registry

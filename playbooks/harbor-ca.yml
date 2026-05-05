@@ -4,21 +4,6 @@
   become: true
   gather_facts: true
   tasks:
-    - name: Check if harbor CA cert already exists on nodes
-      ansible.builtin.stat:
-        path: /etc/rancher/k3s/harbor-ca.crt
-      register: harbor_ca_cert
-    
-    - name: Check if harbor tls cert file exists on nodes
-      ansible.builtin.stat:
-        path: /etc/rancher/k3s/harbor-tls.crt
-      register: harbor_tls_cert
-
-    - name: Check if harbor tls key file exists on nodes
-      ansible.builtin.stat:
-        path: /etc/rancher/k3s/harbor-tls.key
-      register: harbor_tls_key
-
     - name: Copy harbor CA cert to nodes
       ansible.builtin.copy:
         src: ../files/harbor-ca.crt
@@ -26,7 +11,6 @@
         owner: root
         group: root
         mode: "0644"
-      when: not harbor_ca_cert.stat.exists
     
     - name: Copy harbor TLS cert to nodes
       ansible.builtin.copy:
@@ -35,7 +19,6 @@
         owner: root
         group: root
         mode: "0644"
-      when: not harbor_tls_cert.stat.exists
 
     - name: Copy harbor TLS key to nodes
       ansible.builtin.copy:
@@ -44,16 +27,15 @@
         owner: root
         group: root
         mode: "0644"
-      when: not harbor_tls_key.stat.exists
 
     - name: Restart k3s to apply harbor CA cert
       ansible.builtin.systemd:
         name: k3s
         state: restarted
-      when: not harbor_ca_cert.stat.exists and "'server' in group_names"
+      when: "'server' in group_names"
     
     - name: Restart k3s-agent to apply harbor CA cert
       ansible.builtin.systemd:
         name: k3s-agent
         state: restarted
-      when: not harbor_ca_cert.stat.exists and "'agent' in group_names"
+      when: "'agent' in group_names"
