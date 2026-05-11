@@ -15,6 +15,11 @@ k3s_cluster:
     ansible_port: 22
     ansible_user: pdk
     k3s_version: v1.30.2+k3s1
+    vip: 192.168.31.80
+    vip_master_interface: enp0s3
+    vip_backup_interface: enp0s3
+    vip_router_id: 52
+    haproxy_port: 443
     # The token should be a random string of reasonable length. You can generate
     # one with the following commands:
     # - openssl rand -base64 64

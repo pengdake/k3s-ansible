@@ -1,0 +1,78 @@
+---
+- name: Set k3s config for ha
+  ansible.builtin.lineinfile:
+    path: /etc/rancher/k3s/config.yaml
+    line: "tls-san: {{ vip }}" 
+    create: yes
+
+- name: Restart K3s service
+  ansible.builtin.systemd:
+    name: k3s
+    daemon_reload: true
+    state: restarted
+
+- name: Setup haproxy service
+  block:
+    - name: Install haproxy
+      ansible.builtin.apt:
+        name: haproxy
+        state: present
+    
+    - name: Add haproxy config about apiserver
+      ansible.builtin.blockinfile:
+        path: /etc/haproxy/haproxy.cfg
+        block: |
+          frontend k3s-frontend
+              bind *:{{ haproxy_port }}
+              mode tcp
+              option tcplog
+              default_backend k3s-backend
+
+          backend k3s-backend
+              mode tcp
+              option tcp-check
+              balance roundrobin
+              default-server inter 10s downinter 5s
+              {% for server in groups[server_group] %}
+              server {{ hostvars[server]['inventory_hostname'] }} {{ server }}:{{ api_port }} check
+              {% endfor %}
+
+    - name: Restart haproxy
+      ansible.builtin.systemd:
+        state: restarted
+        daemon_reload: true
+        name: haproxy
+
+- name: Setup keepalived service except first server
+  block:
+    - name: install keepalived
+      ansible.builtin.apt:
+        name: keepalived
+        state: present
+
+    - name: Create keepalived common config
+      ansible.builtin.template:
+        src: keepalived.conf.j2
+        dest: /etc/keepalived/keepalived.conf
+        mode: '0644'
+
+    - name: Create keepalived sub config dir
+      ansible.builtin.file:
+        path: /etc/keepalived/conf.d
+        state: directory
+        mode: '0755'
+    
+    - name: Add keepalived config about k3s
+      ansible.builtin.template:
+        src: k3s-vip.conf.j2
+        dest: /etc/keepalived/conf.d/k3s-vip.conf
+        mode: '0644'
+
+    - name: restart keepalived
+      ansible.builtin.systemd:
+        state: restarted
+        daemon_reload: true
+        name: keepalived
+  when:
+    - inventory_hostname != groups[server_group][0] and ansible_host != groups[server_group][0]
+  

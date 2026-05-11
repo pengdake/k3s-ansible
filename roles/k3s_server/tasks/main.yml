@@ -313,3 +313,8 @@
         path: ~{{ ansible_user }}/.bashrc
         regexp: '\.\s+<\(kubectl completion bash\)'
         line: ". <(kubectl completion bash)  # Added by k3s-ansible"
+    
+- name: deploy ha service for k3s api server
+  ansible.builtin.import_tasks:
+    tasks/ha.yml
+      

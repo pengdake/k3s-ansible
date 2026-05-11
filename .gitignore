@@ -3,4 +3,7 @@ venv
 .vscode
 .vagrant
 inventory.yml
+inventory-sample.yml
 playbook/debug.yml
+*.crt
+*.key

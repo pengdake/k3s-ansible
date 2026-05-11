@@ -1,0 +1,32 @@
+vrrp_script chk_haproxy {
+    script 'killall -0 haproxy' # faster than pidof
+    interval 2
+}
+
+vrrp_instance k3s-vip {
+    state BACKUP
+    {% if inventory_hostname == groups[server_group][1] %}
+    #state MASTER
+    priority 200
+    interface {{ vip_master_interface }}
+    nopreempt
+    {% else %}
+    priority 100
+    interface {{ vip_master_interface }}
+    {% endif %}
+    virtual_router_id {{ vip_router_id }}
+    {% if inventory_hostname == groups[server_group][1] %}
+    virtual_ipaddress {
+        {{ vip }} dev {{ vip_master_interface }}
+    }
+    {% else %}
+    virtual_ipaddress {
+        {{ vip }} dev {{ vip_backup_interface }}
+    }
+    {% endif %}
+
+    track_script {
+        chk_haproxy
+    }
+
+}
