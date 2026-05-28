@@ -57,7 +57,7 @@ k3s_cluster:
         docker.io:
           endpoint:
             - "https://docker.xuanyuan.me"
-            - "https://atomhub.openatom.cn"
+            - "https://harbor.pengdake.xyz/v2/proxy-cache"
         registry.k8s.io:
           endpoint:
             - "https://k8s.m.daocloud.io"
