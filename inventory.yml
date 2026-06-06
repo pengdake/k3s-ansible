@@ -56,8 +56,8 @@ k3s_cluster:
       mirrors:
         docker.io:
           endpoint:
-            - "https://docker.xuanyuan.me"
             - "https://harbor.pengdake.xyz/v2/proxy-cache"
+            - "https://docker.xuanyuan.me"
         registry.k8s.io:
           endpoint:
             - "https://k8s.m.daocloud.io"
