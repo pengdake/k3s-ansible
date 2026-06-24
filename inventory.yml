@@ -3,34 +3,34 @@ k3s_cluster:
   children:
     server:
       hosts:
-        192.168.31.93:
-        192.168.31.88:
-        192.168.31.89:
+        192.168.31.98:
     agent:
       hosts:
-        192.168.31.98:
+        192.168.31.99:
 
   # Required Vars
   vars:
     ansible_port: 22
     ansible_user: pdk
-    k3s_version: v1.30.2+k3s1
-    vip: 192.168.31.80
-    vip_master_interface: enp0s3
-    vip_backup_interface: enp0s3
-    vip_router_id: 52
-    haproxy_port: 443
+    k3s_version: v1.36.1+k3s1
+    enable_api_ha: false
+    #vip: 192.168.31.80
+    #vip_master_interface: enp0s3
+    #vip_backup_interface: enp0s3
+    #vip_router_id: 52
+    #haproxy_port: 443
     # The token should be a random string of reasonable length. You can generate
     # one with the following commands:
     # - openssl rand -base64 64
     # - pwgen -s 64 1
     # You can use ansible-vault to encrypt this value / keep it secret.
     # Or you can omit it if not using Vagrant and let the first server automatically generate one.
-    token: "pt8SXBHof4sCeJffGQK4tfwcfT6t541829et5VB/eOkbhbxvtMLhtWmX5h/8hBI5CzGdoQMfmZthBt6kWf2M/g=="
+    # token: "pt8SXBHof4sCeJffGQK4tfwcfT6t541829et5VB/eOkbhbxvtMLhtWmX5h/8hBI5CzGdoQMfmZthBt6kWf2M/g=="
+    token: "L9PKl6UsXZCIfMm8LHv8ihu1AfoCLGa3Mb1v5f6EBjwdON1T0p7RQBdL+aB09yxqdQtrTfBZ8mixDVPo3fyU2g=="
     api_endpoint: "{{ hostvars[groups['server'][0]]['ansible_host'] | default(groups['server'][0]) }}"
 
     # Optional vars
-    extra_server_args: "--disable local-storage --disable servicelb"
+    extra_server_args: "--flannel-backend=none --disable-network-policy --cluster-cidr=10.10.0.0/16"
     # extra_agent_args: ""
     # cluster_context: k3s-ansible
     # api_port: 6443
@@ -56,23 +56,21 @@ k3s_cluster:
       mirrors:
         docker.io:
           endpoint:
-            - "https://harbor.pengdake.xyz/v2/proxy-cache"
-            - "https://docker.xuanyuan.me"
+            - "https://harbor.pengdake.top/v2/proxy-cache"
         registry.k8s.io:
           endpoint:
             - "https://k8s.m.daocloud.io"
         quay.io:
           endpoint:
-            - "https://quay.m.daocloud.io"
-            - "quay.nju.edu.cn"
-        harbor.pengdake.xyz:
+            - "https://harbor.pengdake.top/v2/quay-proxy-cache"
+        harbor.pengdake.top:
           endpoint:
-            - "https://harbor.pengdake.xyz"
+            - "https://harbor.pengdake.top"
         "*":
           endpoint:
             - "http://192.168.31.92:5000"
       configs:
-        "harbor.pengdake.xyz":
+        "harbor.pengdake.top":
           tls:
             ca_file: /etc/rancher/k3s/harbor-ca.crt
             cert_file: /etc/rancher/k3s/harbor-tls.crt

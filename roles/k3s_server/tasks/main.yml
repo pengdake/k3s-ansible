@@ -317,4 +317,4 @@
 - name: deploy ha service for k3s api server
   ansible.builtin.import_tasks:
     tasks/ha.yml
-      
+  when: enable_api_ha and (groups[server_group] | length) > 1
