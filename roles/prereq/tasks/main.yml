@@ -13,6 +13,20 @@
       - nfs-common  # Required for NFS mounts
     update_cache: true
 
+- name: Set innotify max user watches
+  ansible.posix.sysctl:
+    name: fs.inotify.max_user_watches
+    value: "524288"
+    state: present
+    reload: true
+
+- name: Set inotify max user instances
+  ansible.posix.sysctl:
+    name: fs.inotify.max_user_instances
+    value: "8192"
+    state: present
+    reload: true
+
 - name: Enable IPv4 forwarding
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
@@ -254,3 +268,10 @@
         content: "{{ registries_config_yaml }}"
         dest: "/etc/rancher/k3s/registries.yaml"
         mode: "0644"
+
+- name: Disable Multipathd service
+  when: ansible_facts.services['multipathd.service'] is defined
+  ansible.builtin.systemd:
+    name: multipathd
+    enabled: false
+    state: stopped
