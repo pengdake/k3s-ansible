@@ -275,3 +275,10 @@
     name: multipathd
     enabled: false
     state: stopped
+
+- name: Enable iscsid service
+  when: ansible_facts.services['iscsid.service'] is defined
+  ansible.builtin.systemd:
+    name: iscsid
+    enabled: true
+    state: started
